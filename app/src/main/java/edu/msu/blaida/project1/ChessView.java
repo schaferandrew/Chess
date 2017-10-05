@@ -10,6 +10,10 @@ import android.view.View;
  * Custom view class for our Puzzle.
  */
 public class ChessView extends View {
+    /**
+     * The actual puzzle
+     */
+    private Board board;
 
     public ChessView(Context context) {
         super(context);
@@ -27,7 +31,7 @@ public class ChessView extends View {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-
+        board = new edu.msu.blaida.project1.Board(getContext());
     }
 
 
@@ -35,6 +39,7 @@ public class ChessView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        board.draw(canvas);
     }
 
 
