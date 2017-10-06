@@ -56,19 +56,51 @@ public class Board {
                 marginX + boardSize, marginY + boardSize, fillPaint);
     }
 
-    public void movePiece(Piece piece, int destinationX, int destinationY){
+
+    /**
+     * Call this from the touch events.
+     *
+     * @param startX    First tap X in terms of grid position
+     * @param startY    First tap Y in terms of grid position
+     * @param endX      Second tap X in terms of grid position
+     * @param endY      Second tap Y in terms of grid position
+     * @return  boolean flag true if valid move, false if not
+     */
+    public boolean executeMove(int startX, int startY, int endX, int endY){
+        Piece attacker = getPiece(startX, startY);
+        Piece defender = getPiece(endX, endY);
+        if(attacker == null){
+            return false;
+        }
+        else if(attacker != null && defender == null){
+            return movePiece(attacker, endX, endY);
+        }
+        else if(attacker != null && defender != null){
+            return takePiece(attacker, defender);
+        }
+        return false;
+    }
+
+    public Piece getPiece(int x, int y){
+        return this.board[y][x];
+    }
+
+    private boolean movePiece(Piece piece, int destinationX, int destinationY){
         if(piece.validMove(destinationX, destinationY)){
             swapPiece(piece, destinationX, destinationY);
+            return true;
         }
-
+        return false;
         //chessView.Invalidate() //Invalidate after moving. Do in touch event.
     }
 
-    public void takePiece(Piece attacker, Piece defender){
+    private boolean takePiece(Piece attacker, Piece defender){
         if(attacker.validTake(defender.getX(),defender.getY())){
             removePiece(defender.getX(), defender.getY());
             swapPiece(attacker,defender.getX(), defender.getY());
+            return true;
         }
+        return false;
         //chessView.Invalidate() //Invalidate after taking. Do in touch event.
 
     }

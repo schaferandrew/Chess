@@ -60,4 +60,8 @@ public abstract class Piece {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
+
+    public void draw(){
+
+    }
 }
