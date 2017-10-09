@@ -40,9 +40,48 @@ public class Board {
         fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fillPaint.setColor(0xffcccccc);
 
-        // Load the solved puzzle image
+        // Load the empty board image
         boardEmpty = BitmapFactory.decodeResource(context.getResources(),
                         R.drawable.board);
+
+        // Load the chess pieces
+        // Player 2 - Black
+        board[0][0] = new Rook(context,.064f,.058f, 2);
+        board[0][1] = new Knight(context, .190f, .058f, 2);
+        board[0][2] = new Bishop(context, .313f, .065f, 2);
+        board[0][3] = new Queen(context, .440f, .060f,2);
+        board[0][4] = new King(context, 9/16f, 1/16f, 2); //better to do with fractions
+        board[0][5] = new Bishop(context, 11/16f, 1/16f, 2);
+        board[0][6] = new Knight(context, 13/16f, 1/16f, 2);
+        board[0][7] = new Rook(context, 15/16f, 1/16f, 2);
+
+        board[1][0] = new Pawn(context, 1/16f, 3/16f, 2);
+        board[1][1] = new Pawn(context, 3/16f, 3/16f, 2);
+        board[1][2] = new Pawn(context, 5/16f, 3/16f, 2);
+        board[1][3] = new Pawn(context, 7/16f, 3/16f, 2);
+        board[1][4] = new Pawn(context, 9/16f, 3/16f, 2);
+        board[1][5] = new Pawn(context, 11/16f, 3/16f, 2);
+        board[1][6] = new Pawn(context, 13/16f, 3/16f, 2);
+        board[1][7] = new Pawn(context, 15/16f, 3/16f, 2);
+
+        // Player 1 - White
+        board[6][0] = new Pawn(context, 1/16f, 13/16f,1);
+        board[6][1] = new Pawn(context, 3/16f, 13/16f,1);
+        board[6][2] = new Pawn(context, 5/16f, 13/16f,1);
+        board[6][3] = new Pawn(context, 7/16f, 13/16f,1);
+        board[6][4] = new Pawn(context, 9/16f, 13/16f,1);
+        board[6][5] = new Pawn(context, 11/16f, 13/16f,1);
+        board[6][6] = new Pawn(context, 13/16f, 13/16f,1);
+        board[6][7] = new Pawn(context, 15/16f, 13/16f,1);
+
+        board[7][0] = new Rook(context, 1/16f, 15/16f,1);
+        board[7][1] = new Knight(context, 3/16f, 15/16f, 1);
+        board[7][2] = new Bishop(context, 5/16f, 15/16f, 1);
+        board[7][3] = new Queen(context, 7/16f, 15/16f, 1);
+        board[7][4] = new King(context, 9/16f, 15/16f, 1);
+        board[7][5] = new Bishop(context, 11/16f, 15/16f,1);
+        board[7][6] = new Knight(context, 13/16f, 15/16f, 1);
+        board[7][7] = new Rook(context, 15/16f, 15/16f, 1);
 
     }
     public void draw(Canvas canvas) {
@@ -66,6 +105,7 @@ public class Board {
         canvas.drawRect(marginX, marginY,
                 marginX + boardSize, marginY + boardSize, fillPaint);
 
+        // Draw the chess board
         float scaleFactor = (float)boardSize / (float)boardEmpty.getWidth();
 
         canvas.save();
@@ -73,6 +113,16 @@ public class Board {
         canvas.scale(scaleFactor, scaleFactor);
         canvas.drawBitmap(boardEmpty, 0, 0, null);
         canvas.restore();
+
+        // Draw the pieces
+
+        for(Piece[] pieceRow : board) {
+            for(Piece piece : pieceRow) {
+                if (piece != null) {
+                    piece.draw(canvas, marginX, marginY, boardSize, scaleFactor);
+                }
+            }
+        }
     }
 
 

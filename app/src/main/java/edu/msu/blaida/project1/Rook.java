@@ -8,7 +8,7 @@ import android.graphics.BitmapFactory;
  */
 
 public class Rook extends Piece {
-    public Rook(Context context, int x, int y, int player) {
+    public Rook(Context context, float x, float y, int player) {
         super(context, x, y, player);
         if(player == 1){
             this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_rlt45));
