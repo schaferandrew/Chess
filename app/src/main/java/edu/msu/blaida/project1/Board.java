@@ -1,6 +1,8 @@
 package edu.msu.blaida.project1;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
@@ -25,6 +27,11 @@ public class Board {
 
     private Piece[][] board = new Piece[8][8];
 
+    /**
+     * Completed puzzle bitmap
+     */
+    private Bitmap boardEmpty;
+
 
 
     public Board(Context context) {
@@ -32,6 +39,10 @@ public class Board {
         // be solved in.
         fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fillPaint.setColor(0xffcccccc);
+
+        // Load the solved puzzle image
+        boardEmpty = BitmapFactory.decodeResource(context.getResources(),
+                        R.drawable.board);
 
     }
     public void draw(Canvas canvas) {
@@ -54,6 +65,14 @@ public class Board {
 
         canvas.drawRect(marginX, marginY,
                 marginX + boardSize, marginY + boardSize, fillPaint);
+
+        float scaleFactor = (float)boardSize / (float)boardEmpty.getWidth();
+
+        canvas.save();
+        canvas.translate(marginX, marginY);
+        canvas.scale(scaleFactor, scaleFactor);
+        canvas.drawBitmap(boardEmpty, 0, 0, null);
+        canvas.restore();
     }
 
 
