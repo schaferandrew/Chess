@@ -7,11 +7,19 @@
     tools:context="edu.msu.blaida.project1.MainActivity">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/start_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:onClick="onStartGame"
         android:text="@string/start_button"
         tools:text="Start Game" />
+    <Button
+        android:id="@+id/instructions_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:onClick="onInstructions"
+        android:text="@string/instructions_btn"
+        tools:text="Instructions" />
 </LinearLayout>

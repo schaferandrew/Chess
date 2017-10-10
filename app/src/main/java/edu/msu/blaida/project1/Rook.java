@@ -18,12 +18,15 @@ public class Rook extends Piece {
     }
 
     @Override
-    boolean validMove(int x, int y) {
-        return false;
+    boolean validMove(int startX, int startY, int endX, int endY) {
+        if(startX == endX && startY == endY){
+            return false;
+        }
+        return ((startX == endX && startY != endY)||(startX != endX && startY == endY));
     }
 
     @Override
-    boolean validTake(int x, int y) {
-        return false;
+    boolean validTake(int startX, int startY, int endX, int endY) {
+        return validMove(startX, startY, endX, endY);
     }
 }

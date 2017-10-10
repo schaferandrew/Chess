@@ -142,10 +142,10 @@ public class Board {
             return false;
         }
         else if(attacker != null && defender == null){
-            return movePiece(attacker, endX, endY);
+            return movePiece(attacker, startX, startY, endX, endY);
         }
         else if(attacker != null && defender != null){
-            return takePiece(attacker, defender);
+            return takePiece(attacker, defender, startX, startY, endX, endY);
         }
         return false;
     }
@@ -154,8 +154,8 @@ public class Board {
         return this.board[y][x];
     }
 
-    private boolean movePiece(Piece piece, int destinationX, int destinationY){
-        if(piece.validMove(destinationX, destinationY)){
+    private boolean movePiece(Piece piece, int startX, int startY, int destinationX, int destinationY){
+        if(piece.validMove(startX, startY, destinationX, destinationY)){
             swapPiece(piece, destinationX, destinationY);
             return true;
         }
@@ -163,10 +163,10 @@ public class Board {
         //chessView.Invalidate() //Invalidate after moving. Do in touch event.
     }
 
-    private boolean takePiece(Piece attacker, Piece defender){
-        if(attacker.validTake(defender.getX(),defender.getY())){
-            removePiece(defender.getX(), defender.getY());
-            swapPiece(attacker,defender.getX(), defender.getY());
+    private boolean takePiece(Piece attacker, Piece defender, int startX, int startY, int destinationX, int destinationY){
+        if(attacker.validTake(startX, startY, destinationX,destinationY)){
+            removePiece(destinationX, destinationY);
+            swapPiece(attacker,destinationX, destinationY);
             return true;
         }
         return false;

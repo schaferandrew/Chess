@@ -19,12 +19,12 @@ public class King extends Piece {
     }
 
     @Override
-    boolean validMove(int x, int y) {
-        return true;
+    boolean validMove(int startX, int startY, int endX, int endY){
+        return (Math.abs(startX - endX) < 2 && Math.abs(startY - endY) < 2);
     }
 
     @Override
-    boolean validTake(int x, int y) {
-        return true;
+    boolean validTake(int startX, int startY, int endX, int endY) {
+        return validMove(startX, startY, endX, endY);
     }
 }

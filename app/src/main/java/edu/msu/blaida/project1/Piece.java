@@ -30,9 +30,9 @@ public abstract class Piece {
         this.player = player;
     }
 
-    abstract boolean validMove(int x, int y);
+    abstract boolean validMove(int startX, int startY, int endX, int endY);
 
-    abstract boolean validTake(int x, int y);
+    abstract boolean validTake(int startX, int startY, int endX, int endY);
 
     public int getX() {
         return x;
@@ -91,4 +91,5 @@ public abstract class Piece {
         canvas.drawBitmap(getBitmap(), 0, 0, null);
         canvas.restore();
     }
+
 }

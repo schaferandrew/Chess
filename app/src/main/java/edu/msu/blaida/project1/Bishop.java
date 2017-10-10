@@ -19,12 +19,12 @@ public class Bishop extends Piece {
     }
 
     @Override
-    boolean validMove(int x, int y) {
-        return false;
+    boolean validMove(int startX, int startY, int endX, int endY) {
+        return (Math.abs(endX- startX) == Math.abs(endY-startY));
     }
 
     @Override
-    boolean validTake(int x, int y) {
-        return false;
+    boolean validTake(int startX, int startY, int endX, int endY){
+        return validMove(startX, startY, endX, endY);
     }
 }

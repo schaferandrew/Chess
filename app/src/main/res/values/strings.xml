@@ -5,7 +5,10 @@
     <string name="play_again_btn">Play Again</string>
     <string name="end_game_btn">End Game</string>
     <string name="main_menu_btn">Main Menu</string>
-
+    <string name="instructions_btn">Instructions</string>
+    <string name="instructions_text">Instructions\nTo play, tap on the piece you would like to move, then tap on the destination. If it is a valid move, the view will update.\nWhite player will move first, then alternate for the rest of the game.\nThe game ends when one player takes the others king piece (Checkmate)\nPawns: Pawns can only move forward. On the first turn, the pawn can move one or two spaces. Afterwards, it can only move one space. Pawns take pieces by moving one space diagonally. When a pawn reaches the opposite end of the board, it can be upgraded to any other piece, except king.\nRook: A rook can move in a straight line forwards, backwards, or sideways for any number of spaces\nKnight: A knight can move two spaces in any direction, then one space at a right angle to the previous direction. Think of an \"L\" shape. The knight is the only piece that is not blocked by other pieces in it\'s movement path.\nBishop: A bishop can move any number of spaces diagonally.\nQueen: A queen has the same movesets as a rook and bishop combined, moving any number of spaces straight or diagonally.\nKing: A king can move one space in any direction.\nIf you would like to end the game at any time, press the three dots in the top right corner of the game screen.</string>
+    <string name="player_one_turn">White, it is your turn!</string>
+    <string name="player_two_turn">Black, it is your turn!</string>
 
 
 </resources>

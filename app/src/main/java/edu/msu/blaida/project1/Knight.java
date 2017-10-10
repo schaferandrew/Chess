@@ -18,12 +18,12 @@ public class Knight extends Piece {
     }
 
     @Override
-    boolean validMove(int x, int y) {
+    boolean validMove(int startX, int startY, int endX, int endY) {
         return false;
     }
 
     @Override
-    boolean validTake(int x, int y) {
+    boolean validTake(int startX, int startY, int endX, int endY) {
         return false;
     }
 }
