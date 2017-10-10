@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Project1</string>
     <string name="start_button">Start Game</string>
+    <string name="game_over">Game Over</string>
+    <string name="play_again_btn">Play Again</string>
+    <string name="end_game_btn">End Game</string>
+    <string name="main_menu_btn">Main Menu</string>
+
+
+
 </resources>

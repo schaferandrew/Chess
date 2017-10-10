@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onStartGame(View view) {
         Intent intent = new Intent(this, ChessActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 }
