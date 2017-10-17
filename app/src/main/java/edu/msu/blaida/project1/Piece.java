@@ -92,4 +92,31 @@ public abstract class Piece {
         canvas.restore();
     }
 
+    /**
+     * Test to see if we have touched a puzzle piece
+     * @param testX X location as a normalized coordinate (0 to 1)
+     * @param testY Y location as a normalized coordinate (0 to 1)
+     * @param boardSize the size of the puzzle in pixels
+     * @param scaleFactor the amount to scale a piece by
+     * @return true if we hit the piece
+     */
+    public boolean hit(float testX, float testY,
+                       int boardSize, float scaleFactor) {
+
+        // Make relative to the location and size to the piece size
+        int pX = (int)((testX - X) * boardSize / scaleFactor) +
+                bitmap.getWidth() / 2;
+        int pY = (int)((testY - Y) * boardSize / scaleFactor) +
+                bitmap.getHeight() / 2;
+
+        if(pX < 0 || pX >= bitmap.getWidth() ||
+                pY < 0 || pY >= bitmap.getHeight()) {
+            return false;
+        }
+
+        // We are within the rectangle of the piece.
+        // Are we touching actual picture?
+        return true;
+    }
+
 }

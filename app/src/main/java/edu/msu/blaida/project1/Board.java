@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
 
 public class Board {
@@ -20,11 +23,6 @@ public class Board {
      */
     private Paint fillPaint;
 
-    /**
-     * Paint for outlining the area the puzzle is in
-     */
-    private Paint outlinePaint;
-
     private Piece[][] board = new Piece[8][8];
 
     /**
@@ -32,7 +30,30 @@ public class Board {
      */
     private Bitmap boardEmpty;
 
+    /**
+     * The size of the puzzle in pixels
+     */
+    private int boardSize;
 
+    /**
+     * How much we scale the puzzle pieces
+     */
+    private float scaleFactor;
+
+    /**
+     * Left margin in pixels
+     */
+    private int marginX;
+
+    /**
+     * Top margin in pixels
+     */
+    private int marginY;
+
+    /**
+     * Selected piece
+     */
+    private Piece selectedPiece = null;
 
     public Board(Context context) {
         // Create paint for filling the area the board will
@@ -91,12 +112,12 @@ public class Board {
         // Determine the minimum of the two dimensions
         int minDim = wid < hit ? wid : hit;
 
-        int boardSize = (int)(minDim * SCALE_IN_VIEW);
+        boardSize = (int)(minDim * SCALE_IN_VIEW);
 
         // Compute the margins so we center the puzzle
-        int marginX = (wid - boardSize
+        marginX = (wid - boardSize
         ) / 2;
-        int marginY = (hit - boardSize) / 2;
+        marginY = (hit - boardSize) / 2;
 
         //
         // Draw the outline of the puzzle
@@ -106,7 +127,7 @@ public class Board {
                 marginX + boardSize, marginY + boardSize, fillPaint);
 
         // Draw the chess board
-        float scaleFactor = (float)boardSize / (float)boardEmpty.getWidth();
+        scaleFactor = (float)boardSize / (float)boardEmpty.getWidth();
 
         canvas.save();
         canvas.translate(marginX, marginY);
@@ -125,6 +146,57 @@ public class Board {
         }
     }
 
+    /**
+     * Handle a touch event from the view.
+     * @param view The view that is the source of the touch
+     * @param event The motion event describing the touch
+     * @return true if the touch is handled.
+     */
+    public boolean onTouchEvent(View view, MotionEvent event) {
+        //
+        // Convert an x,y location to a relative location in the
+        // puzzle.
+        //
+
+        float relX = (event.getX() - marginX) / boardSize;
+        float relY = (event.getY() - marginY) / boardSize;
+
+        return onTouched(relX, relY);
+    }
+
+    /**
+     * Handle a touch message. This is when we get an initial touch
+     * @param x x location for the touch, relative to the puzzle - 0 to 1 over the puzzle
+     * @param y y location for the touch, relative to the puzzle - 0 to 1 over the puzzle
+     * @return true if the touch is handled
+     */
+    private boolean onTouched(float x, float y) {
+
+        // Check each piece to see if it has been hit
+        // We do this in reverse order so we find the pieces in front
+
+        for(Piece[] pieceRow : board) {
+            for(Piece piece : pieceRow) {
+                if (piece != null) {
+                    if (piece.hit(x, y, boardSize, scaleFactor)) {
+                        // We hit a piece
+                        //Log.d("HitTest", "Hit Piece");
+                        if (selectedPiece == null) {
+                            selectedPiece = piece;
+                            //might want to signify press with color change of selected piece
+                        }
+                        else {
+                            // make sure selectedPiece is reset to null after move is executed
+                            // do what Adam needs it to do
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Call this from the touch events.

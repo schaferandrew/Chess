@@ -3,6 +3,7 @@ package edu.msu.blaida.project1;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 
@@ -42,5 +43,8 @@ public class ChessView extends View {
         board.draw(canvas);
     }
 
-
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return board.onTouchEvent(this, event);
+    }
 }
