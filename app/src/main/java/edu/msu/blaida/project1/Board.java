@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import static java.lang.Math.floor;
+
 
 public class Board {
 
@@ -53,7 +55,7 @@ public class Board {
     /**
      * Selected piece
      */
-    private Piece selectedPiece = null;
+    private float[] selectedPiece = null;
 
     public Board(Context context) {
         // Create paint for filling the area the board will
@@ -174,27 +176,14 @@ public class Board {
 
         // Check each piece to see if it has been hit
         // We do this in reverse order so we find the pieces in front
-
-        for(Piece[] pieceRow : board) {
-            for(Piece piece : pieceRow) {
-                if (piece != null) {
-                    if (piece.hit(x, y, boardSize, scaleFactor)) {
-                        // We hit a piece
-                        //Log.d("HitTest", "Hit Piece");
-                        if (selectedPiece == null) {
-                            selectedPiece = piece;
-                            //might want to signify press with color change of selected piece
-                        }
-                        else {
-                            // make sure selectedPiece is reset to null after move is executed
-                            // do what Adam needs it to do
-                        }
-                        return true;
-                    }
-                }
-            }
+        if (selectedPiece == null) {
+            selectedPiece = new float[]{ x, y};
+        } else {
+            int [] startGridPosition = toGridPosition(selectedPiece[0], selectedPiece[1]);
+            int[] endGridPosition = toGridPosition(x,y);
+            executeMove(startGridPosition[0], startGridPosition[1], endGridPosition[0], endGridPosition[1]);
+            selectedPiece = null;
         }
-
         return false;
     }
 
@@ -268,5 +257,12 @@ public class Board {
         removePiece(piece.getX(), piece.getY());
         piece.setX(newX);
         piece.setY(newY);
+    }
+
+    private int[] toGridPosition(float x, float y) {
+        int gridX = (int) floor(x * 8);
+        int gridY = (int) floor(y * 8);
+
+        return new int[]{gridX,gridY};
     }
 }
