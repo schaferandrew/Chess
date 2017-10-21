@@ -10,12 +10,19 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static java.lang.Math.floor;
 
 
+
+
 public class Board {
+
+    public enum EndOfTurnKingStatus{
+        SAFE, CHECK, CHECKMATE
+    }
 
     /**
      * Percentage of the display width or height that
@@ -235,10 +242,11 @@ public class Board {
 
     private boolean takePiece(Piece attacker, Point start, Point end){
         Point[] path = attacker.getTakePath(start, end);
-        path = Arrays.copyOf(path, path.length-1);
         if(path == null){
             return false;
         }
+        path = Arrays.copyOf(path, path.length-1);
+
         if(!piecesBlockingPath(path)){
             board[start.y][start.x] = null;
             board[end.y][end.x] = attacker;
@@ -289,5 +297,82 @@ public class Board {
             }
         }
         return false;
+    }
+
+
+    private Point findKing(int player){
+        //Look for the right king
+        for(int i=0;i<8;i++) {
+            for(int j=0;j<8;j++) {
+                //Search the board for the king
+                Piece piece = board[j][i];
+                if (piece != null && piece instanceof King){
+                    //Now that we've found the king, make sure its the right player
+                    if(piece.getPlayer() == player){
+
+                        /*
+                        //Then get the 3x3 square around the king
+
+                        */
+                        return new Point(i,j);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    private boolean someoneCanAttackSpace(Point target, int attackingPlayer){
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+                Piece piece = board[j][i];
+                if(piece == null)
+                    continue;
+                if(piece.getPlayer() == attackingPlayer){
+                    Point[] path =piece.getTakePath(new Point(i,j), target);
+                    if(!piecesBlockingPath(path)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public EndOfTurnKingStatus checkKing(int player){
+        int opponent;
+        if(player == 1){
+            opponent = 2;
+        }else{
+            opponent = 1;
+        }
+
+        EndOfTurnKingStatus status = EndOfTurnKingStatus.SAFE;
+        Point KingSpace = findKing(player);
+
+        if(someoneCanAttackSpace(KingSpace, opponent)){
+            status = EndOfTurnKingStatus.CHECK;
+        }
+
+        if(status == EndOfTurnKingStatus.CHECK){
+            for(int i=-1;i<2;i++){
+                for(int j=-1;j<2;j++){
+                    int x = KingSpace.x+i;
+                    int y = KingSpace.y+j;
+                    if(x >0 && x<8 && y>0 && y <8){
+                        //If the space is empty and nobody can attack the space, return status as in Check
+                        if(getPiece(x,y) == null && !someoneCanAttackSpace(new Point(x, y), opponent))
+                            return status;
+                    }
+                }
+            }
+            //If we've gotten through, then all spaces king can move to are able to be attacked. Checkmate.
+            status = EndOfTurnKingStatus.CHECKMATE;
+            return status;
+        }
+
+        return EndOfTurnKingStatus.SAFE;
     }
 }

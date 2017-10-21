@@ -85,7 +85,6 @@ public class Pawn extends Piece {
         }else{
             if(Math.abs(start.x - end.x) == 1 && end.y-start.y == 1){
                 path.add(new Point(end.x,end.y));
-                return null;
             }else{
                 return null;
             }
