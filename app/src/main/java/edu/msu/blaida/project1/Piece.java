@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 
 /**
  * Abstract class describing a piece
@@ -16,23 +17,25 @@ public abstract class Piece {
     private int y;
 
     // Actual coordinates on the canvas for pieces
-    private float X;
-    private float Y;
+    //private float X;
+    //private float Y;
 
     private int player;
 
     private Bitmap bitmap;
 
+    private boolean firstMove = true;
+
 
     public Piece(Context context, float x, float y, int player) {
-        this.X = x;
-        this.Y = y;
+        //this.X = x;
+        //this.Y = y;
         this.player = player;
     }
 
-    abstract boolean validMove(int startX, int startY, int endX, int endY);
+    abstract Point[] getMovePath(Point start, Point end);
 
-    abstract boolean validTake(int startX, int startY, int endX, int endY);
+    abstract Point[] getTakePath(Point start, Point end);
 
     public int getX() {
         return x;
@@ -40,6 +43,14 @@ public abstract class Piece {
 
     public void setX(int x) {
         this.x = x;
+    }
+
+    public boolean isFirstMove() {
+        return firstMove;
+    }
+
+    public void setFirstMove(boolean firstMove) {
+        this.firstMove = firstMove;
     }
 
     public int getY() {
@@ -75,11 +86,12 @@ public abstract class Piece {
      * @param scaleFactor Amount we scale the puzzle pieces when we draw them
      */
     public void draw(Canvas canvas, int marginX, int marginY,
-                     int boardSize, float scaleFactor) {
+                     int boardSize, float scaleFactor,
+                     float posX, float posY) {
         canvas.save();
 
         // Convert x,y to pixels and add the margin, then draw
-        canvas.translate(marginX + X * boardSize, marginY + Y * boardSize);
+        canvas.translate(marginX + ((posX*2+1)/16) * boardSize, marginY + ((posY*2+1)/16) * boardSize);
 
         // Scale it to the right size
         canvas.scale(scaleFactor/5, scaleFactor/5);
@@ -92,6 +104,7 @@ public abstract class Piece {
         canvas.restore();
     }
 
+
     /**
      * Test to see if we have touched a puzzle piece
      * @param testX X location as a normalized coordinate (0 to 1)
@@ -100,6 +113,7 @@ public abstract class Piece {
      * @param scaleFactor the amount to scale a piece by
      * @return true if we hit the piece
      */
+    /*
     public boolean hit(float testX, float testY,
                        int boardSize, float scaleFactor) {
 
@@ -118,5 +132,6 @@ public abstract class Piece {
         // Are we touching actual picture?
         return true;
     }
+    */
 
 }

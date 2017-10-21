@@ -33,6 +33,7 @@ public class ChessView extends View {
 
     private void init(AttributeSet attrs, int defStyle) {
         board = new edu.msu.blaida.project1.Board(getContext());
+        setWillNotDraw(false);
     }
 
 
@@ -45,6 +46,12 @@ public class ChessView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return board.onTouchEvent(this, event);
+        boolean success = board.onTouchEvent(this,event);
+        if(success){
+            invalidate();
+            return true;
+        }
+        invalidate();
+        return super.onTouchEvent(event);
     }
 }

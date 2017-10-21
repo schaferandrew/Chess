@@ -3,6 +3,9 @@ package edu.msu.blaida.project1;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+
+import java.util.ArrayList;
 
 
 /**
@@ -11,10 +14,6 @@ import android.graphics.BitmapFactory;
 
 public class Pawn extends Piece {
 
-    /**
-     * Used to monitor if it is the first move. If so, the pawn can move 2 spaces forward.
-     */
-    private boolean firstMove = true;
 
     public Pawn(Context context, float x, float y, int player){
         super(context, x, y, player);
@@ -27,50 +26,74 @@ public class Pawn extends Piece {
     }
 
     @Override
-    boolean validMove(int startX, int startY, int endX, int endY) {
-        if(startX == endX && startY == endY){
-            return false;
+    Point[] getMovePath(Point start, Point end) {
+        ArrayList<Point> path = new ArrayList<Point>();
+        if(start.x == end.x && start.y == end.y){
+            return null;
         }
-        if(this.firstMove){
-            this.firstMove = false;
+        if(this.isFirstMove()){
             if(getPlayer() == 1){
-                if(startX == endX && (endY-startY == -1 || endY-startY == -2)){
-                    this.firstMove = false;
-                    return true;
+                if(start.x == end.x && (end.y-start.y == -1 || end.y-start.y == -2)){
+                    for(int i=1;i<Math.abs(start.y-end.y)+1;i++){
+                        path.add(new Point(start.x,start.y-i));
+                    }
                 }else{
-                    return false;
+                    return null;
                 }
             }else{
-                return (startX == endX && (endY-startY == 1 || endY-startY == 2));
+                if(start.x == end.x && (end.y-start.y == 1 || end.y-start.y == 2)){
+                    for(int i=1;i<Math.abs(start.y-end.y)+1;i++){
+                        path.add(new Point(start.x,start.y+i));
+                    }
+                }else{
+                    return null;
+                }
             }
         }else{
             if(getPlayer() == 1){
-                return (startX == endX && endY-startY == -1);
+                if(start.x == end.x && end.y-start.y == -1){
+                    path.add(new Point(end.x,end.y));
+                }else{
+                    return null;
+                }
             }else{
-                return (startX == endX && endY-startY == 1);
+                if(start.x == end.x && end.y-start.y == 1){
+                    path.add(new Point(end.x,end.y));
+                }else{
+                    return null;
+                }
             }
+
         }
+        Point[] vals = new Point[path.size()];
+        path.toArray(vals);
+        return vals;
     }
 
     @Override
-    boolean validTake(int startX, int startY, int endX, int endY) {
-        if(startX == endX && startY == endY){
-            return false;
+    Point[] getTakePath(Point start, Point end){
+        ArrayList<Point> path = new ArrayList<Point>();
+        if(start.x == end.x && start.y == end.y){
+            return null;
         }
         if(getPlayer() == 1){
-            if(Math.abs(startX - endX) == 1 && endY-startY == -1){
-                this.firstMove = false;
-                return true;
+            if(Math.abs(start.x - end.x) == 1 && end.y-start.y == -1){
+                path.add(new Point(end.x,end.y));
             }else{
-                return false;
+                return null;
             }
         }else{
-            if(Math.abs(startX - endX) == 1 && endY-startY == 1){
-                this.firstMove = false;
-                return true;
+            if(Math.abs(start.x - end.x) == 1 && end.y-start.y == 1){
+                path.add(new Point(end.x,end.y));
+                return null;
             }else{
-                return false;
+                return null;
             }
         }
+
+        Point[] vals = new Point[path.size()];
+        path.toArray(vals);
+        return vals;
     }
+
 }

@@ -5,9 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.Arrays;
 
 import static java.lang.Math.floor;
 
@@ -139,13 +142,19 @@ public class Board {
 
         // Draw the pieces
 
+        int i =0,j =0;
+
         for(Piece[] pieceRow : board) {
             for(Piece piece : pieceRow) {
                 if (piece != null) {
-                    piece.draw(canvas, marginX, marginY, boardSize, scaleFactor);
+                    piece.draw(canvas, marginX, marginY, boardSize, scaleFactor, j, i);
                 }
+                j++;
             }
+            i++;
+            j=0;
         }
+        canvas.restore();
     }
 
     /**
@@ -179,34 +188,28 @@ public class Board {
         if (selectedPiece == null) {
             selectedPiece = new float[]{ x, y};
         } else {
-            int [] startGridPosition = toGridPosition(selectedPiece[0], selectedPiece[1]);
-            int[] endGridPosition = toGridPosition(x,y);
-            executeMove(startGridPosition[0], startGridPosition[1], endGridPosition[0], endGridPosition[1]);
+            Point startGridPosition = toGridPosition(selectedPiece[0], selectedPiece[1]);
+            Point endGridPosition = toGridPosition(x,y);
+            executeMove(startGridPosition,endGridPosition);
             selectedPiece = null;
         }
         return false;
     }
 
-    /**
-     * Call this from the touch events.
-     *
-     * @param startX    First tap X in terms of grid position
-     * @param startY    First tap Y in terms of grid position
-     * @param endX      Second tap X in terms of grid position
-     * @param endY      Second tap Y in terms of grid position
-     * @return  boolean flag true if valid move, false if not
-     */
-    public boolean executeMove(int startX, int startY, int endX, int endY){
-        Piece attacker = getPiece(startX, startY);
-        Piece defender = getPiece(endX, endY);
+    public boolean executeMove(Point start, Point end){
+        Piece attacker = getPiece(start.x, start.y);
+        Piece defender = getPiece(end.x, end.y);
+        Point[] path;
         if(attacker == null){
             return false;
         }
         else if(attacker != null && defender == null){
-            return movePiece(attacker, startX, startY, endX, endY);
+            return movePiece(attacker, start, end);
         }
         else if(attacker != null && defender != null){
-            return takePiece(attacker, defender, startX, startY, endX, endY);
+            if(attacker.getPlayer() == defender.getPlayer())
+                return false;
+            return takePiece(attacker, start, end);
         }
         return false;
     }
@@ -215,25 +218,37 @@ public class Board {
         return this.board[y][x];
     }
 
-    private boolean movePiece(Piece piece, int startX, int startY, int destinationX, int destinationY){
-        if(piece.validMove(startX, startY, destinationX, destinationY)){
-            swapPiece(piece, destinationX, destinationY);
+    private boolean movePiece(Piece piece, Point start, Point end){
+        Point[] path = piece.getMovePath(start, end);
+        if(path == null){
+            return false;
+        }
+        if(!piecesBlockingPath(path)){
+            board[start.y][start.x] = null;
+            board[end.y][end.x] = piece;
+            piece.setFirstMove(false);
             return true;
         }
         return false;
         //chessView.Invalidate() //Invalidate after moving. Do in touch event.
     }
 
-    private boolean takePiece(Piece attacker, Piece defender, int startX, int startY, int destinationX, int destinationY){
-        if(attacker.validTake(startX, startY, destinationX,destinationY)){
-            removePiece(destinationX, destinationY);
-            swapPiece(attacker,destinationX, destinationY);
+    private boolean takePiece(Piece attacker, Point start, Point end){
+        Point[] path = attacker.getTakePath(start, end);
+        path = Arrays.copyOf(path, path.length-1);
+        if(path == null){
+            return false;
+        }
+        if(!piecesBlockingPath(path)){
+            board[start.y][start.x] = null;
+            board[end.y][end.x] = attacker;
+            attacker.setFirstMove(false);
             return true;
         }
         return false;
-        //chessView.Invalidate() //Invalidate after taking. Do in touch event.
-
+        //chessView.Invalidate() //Invalidate after moving. Do in touch event.
     }
+
 
     /**
      * Helper function for takePiece. Does not perform error checking again, so do not call directly.
@@ -259,10 +274,20 @@ public class Board {
         piece.setY(newY);
     }
 
-    private int[] toGridPosition(float x, float y) {
+    private Point toGridPosition(float x, float y) {
         int gridX = (int) floor(x * 8);
         int gridY = (int) floor(y * 8);
 
-        return new int[]{gridX,gridY};
+        return new Point(gridX,gridY);
+    }
+
+    private boolean piecesBlockingPath(Point[] path){
+        for(Point position:path){
+            Piece piece = this.getPiece(position.x,position.y);
+            if(piece != null){
+                return true;
+            }
+        }
+        return false;
     }
 }
