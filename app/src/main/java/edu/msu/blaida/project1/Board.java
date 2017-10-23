@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static edu.msu.blaida.project1.R.id.textView;
 import static java.lang.Math.floor;
 
 
@@ -67,6 +69,11 @@ public class Board {
      * Selected piece
      */
     private float[] selectedPiece = null;
+
+    /**
+     * Turn Counter 0 is white
+     */
+    private int playerTurn = 1;
 
     public Piece[][] getBoard() {
         return board;
@@ -169,9 +176,7 @@ public class Board {
         canvas.scale(scaleFactor, scaleFactor);
         canvas.drawBitmap(boardEmpty, 0, 0, null);
         canvas.restore();
-
         // Draw the pieces
-
         int i =0,j =0;
 
         for(Piece[] pieceRow : board) {
@@ -184,7 +189,6 @@ public class Board {
             i++;
             j=0;
         }
-        canvas.restore();
     }
 
     /**
@@ -216,11 +220,23 @@ public class Board {
         // Check each piece to see if it has been hit
         // We do this in reverse order so we find the pieces in front
         if (selectedPiece == null) {
-            selectedPiece = new float[]{ x, y};
+            Point checkGridPosition = toGridPosition(x, y);
+            Piece checkSelectedPiece = getPiece(checkGridPosition.x, checkGridPosition.y);
+            if (checkSelectedPiece != null && checkSelectedPiece.getPlayer() == playerTurn) {
+                selectedPiece = new float[]{ x, y};
+            } else {
+                return false;
+            }
         } else {
             Point startGridPosition = toGridPosition(selectedPiece[0], selectedPiece[1]);
             Point endGridPosition = toGridPosition(x,y);
-            executeMove(startGridPosition,endGridPosition);
+            if (executeMove(startGridPosition,endGridPosition)) {
+                if (playerTurn == 1) {
+                    playerTurn = 2;
+                } else {
+                    playerTurn = 1;
+                }
+            }
             selectedPiece = null;
         }
         return false;
