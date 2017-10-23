@@ -12,9 +12,23 @@ import android.view.MenuItem;
 public class ChessActivity extends AppCompatActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        ChessView view = (ChessView)this.findViewById(R.id.chessView);
+        view.saveInstanceState(bundle);
+    }
+
+    @Override
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         setContentView(R.layout.activity_chess);
+
+        if(bundle != null) {
+            // We have saved state
+            ChessView view = (ChessView)this.findViewById(R.id.chessView);
+            view.loadInstanceState(bundle);
+        }
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

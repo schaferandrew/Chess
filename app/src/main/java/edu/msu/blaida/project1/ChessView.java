@@ -2,6 +2,7 @@ package edu.msu.blaida.project1;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,6 +30,20 @@ public class ChessView extends View {
     public ChessView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
+    }
+    /**
+     * Save the puzzle to a bundle
+     * @param bundle The bundle we save to
+     */
+    public void saveInstanceState(Bundle bundle) {
+        board.saveInstanceState(bundle);
+    }
+    /**
+     * Load the puzzle from a bundle
+     * @param bundle The bundle we save to
+     */
+    public void loadInstanceState(Bundle bundle) {
+        board.loadInstanceState(bundle);
     }
 
     private void init(AttributeSet attrs, int defStyle) {

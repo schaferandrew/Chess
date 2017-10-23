@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -66,6 +67,28 @@ public class Board {
      * Selected piece
      */
     private float[] selectedPiece = null;
+
+    public Piece[][] getBoard() {
+        return board;
+    }
+    public void setBoard(Piece[][] board) {
+        this.board = board;
+    }
+    /**
+     * Save the board to a bundle
+     * @param bundle The bundle we save to
+     */
+    public void saveInstanceState(Bundle bundle) {
+        bundle.putSerializable("BOARD", board);
+    }
+    /**
+     * Read the puzzle from a bundle
+     * @param bundle The bundle we save to
+     */
+    public void loadInstanceState(Bundle bundle) {
+        board = (Piece[][]) bundle.getSerializable("BOARD");
+
+    }
 
     public Board(Context context) {
         // Create paint for filling the area the board will
