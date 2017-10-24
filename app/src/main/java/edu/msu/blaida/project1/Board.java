@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -21,6 +22,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static edu.msu.blaida.project1.R.id.contentPanel;
 import static edu.msu.blaida.project1.R.id.textView;
 import static java.lang.Math.floor;
 
@@ -84,6 +86,9 @@ public class Board {
 
     private Context context = null;
     private TextView playerIndicator;
+    private ChessView view;
+    private Activity activity;
+
 
     /**
      * 0 is player 1, 1 is player 2
@@ -100,6 +105,13 @@ public class Board {
     public void setPlayerIndicator(TextView playerIndicator) {
         this.playerIndicator = playerIndicator;
     }
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
+    public void setView(ChessView view) {
+        this.view = view;
+    }
+
     /**
      * Save the board to a bundle
      * @param bundle The bundle we save to
@@ -169,8 +181,25 @@ public class Board {
         board[7][7] = new Rook(context, 15/16f, 15/16f, 1);
 
     }
+    public void resign() {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(context);
 
-    public void draw(Canvas canvas, Activity activity) {
+        // Parameterize the builder
+        builder.setTitle("Resign");
+        builder.setMessage("Player " + playerTurn + " has Resigned")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(activity, activity_end.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        activity.startActivity(intent);
+                    }
+                });
+        builder.show();
+
+    }
+    public void draw(Canvas canvas) {
 
         int wid = canvas.getWidth();
         int hit = canvas.getHeight();
@@ -216,9 +245,9 @@ public class Board {
         }
 
         if (playerTurn == 1) {
-            playerIndicator.setText("WHITE");
+            playerIndicator.setText(context.getResources().getString(R.string.player_one_turn));
         } else {
-            playerIndicator.setText("BLACK");
+            playerIndicator.setText(context.getResources().getString(R.string.player_two_turn));
         }
     }
 
@@ -364,6 +393,7 @@ public class Board {
                 } else {
                     board[end.y][end.x] = new Bishop(context, 7/16f, 15/16f, piece.getPlayer());
                 }
+                view.invalidate();
             }
         });
 
@@ -377,6 +407,7 @@ public class Board {
             getPromotion(piece, end);
         } else if (piece.getPlayer() == 2 && end.y == 7){
             getPromotion(piece, end);
+
         }
 
     }

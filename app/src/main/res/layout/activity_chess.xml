@@ -16,6 +16,12 @@
         tools:text="@string/player_one_turn" />
 
     <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/player_done" />
+
+    <Button
         android:id="@+id/btnResign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
