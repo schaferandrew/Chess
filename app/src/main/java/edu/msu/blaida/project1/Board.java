@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -181,6 +182,21 @@ public class Board {
 
     }
     public void resign() {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(context);
+
+        // Parameterize the builder
+        builder.setTitle("Resign");
+        builder.setMessage("Player " + playerTurn + " has Resigned")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(activity, activity_end.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        activity.startActivity(intent);
+                    }
+                });
+        builder.show();
 
     }
     public void draw(Canvas canvas) {
