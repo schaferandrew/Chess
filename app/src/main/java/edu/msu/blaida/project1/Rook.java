@@ -52,7 +52,6 @@ public class Rook extends Piece {
 
                 }
             }
-
             Point[] vals = new Point[path.size()];
             path.toArray(vals);
             return vals;
