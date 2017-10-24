@@ -30,7 +30,7 @@ import static java.lang.Math.floor;
 public class Board {
 
     public enum EndOfTurnKingStatus{
-        SAFE, CHECK, CHECKMATE
+        SAFE, CHECK, CHECKMATE, TAKEN
     }
 
     /**
@@ -275,7 +275,11 @@ public class Board {
                     playerTurn = 1;
                 }
                 //Find check/checkmate status of the player who's turn it now is
-                playerStatus[playerTurn-1] = checkKing(playerTurn);
+                EndOfTurnKingStatus status = checkKing(playerTurn);
+                if(status == EndOfTurnKingStatus.CHECKMATE || status == EndOfTurnKingStatus.TAKEN){
+                    //!TODO GAME OVER, current player has lost.
+                }
+                playerStatus[playerTurn-1] = status;
                 selectedPiece = null;
                 return touchResults.VALIDMOVE;
             }
@@ -494,6 +498,10 @@ public class Board {
 
         EndOfTurnKingStatus status = EndOfTurnKingStatus.SAFE;
         Point KingSpace = findKing(player);
+
+        if(KingSpace == null){
+            return EndOfTurnKingStatus.TAKEN;
+        }
 
         if(someoneCanAttackSpace(KingSpace, opponent)){
             status = EndOfTurnKingStatus.CHECK;
