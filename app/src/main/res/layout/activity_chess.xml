@@ -15,6 +15,12 @@
         tools:layout_editor_absoluteY="8dp"
         tools:text="@string/player_one_turn" />
 
+    <Button
+        android:id="@+id/btnResign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/player_resign" />
+
     <view
         android:id="@+id/chessView"
         class="edu.msu.blaida.project1.ChessView"
