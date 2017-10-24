@@ -83,6 +83,11 @@ public class Board {
      */
     private int playerTurn = 1;
 
+    /**
+     * Paint for outlining selected piece
+     */
+    private Paint outlinePaint;
+
 
     private Context context = null;
     private TextView playerIndicator;
@@ -133,7 +138,6 @@ public class Board {
         // be solved in.
 
         this.context = context;
-
         fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fillPaint.setColor(0xffcccccc);
 
@@ -224,11 +228,28 @@ public class Board {
 
         // Draw the chess board
         scaleFactor = (float)boardSize / (float)boardEmpty.getWidth();
+        outlinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        outlinePaint.setColor(0xff00ff00);
+        //outlinePaint.setStrokeWidth(5f);
 
         canvas.save();
         canvas.translate(marginX, marginY);
         canvas.scale(scaleFactor, scaleFactor);
         canvas.drawBitmap(boardEmpty, 0, 0, null);
+        if (selectedPiece != null) {
+            Point GridPosition = toGridPosition(selectedPiece[0], selectedPiece[1]);
+            assert GridPosition != null;
+            GridPosition.x = GridPosition.x * 2 + 1;
+            GridPosition.y = GridPosition.y * 2 + 1;
+            canvas.drawLine(((GridPosition.x - 1) / 16f) * boardSize / scaleFactor, (boardSize * (GridPosition.y -1)/16f)/ scaleFactor,
+                    (boardSize * (GridPosition.x-1)/16f) / scaleFactor, (boardSize * (GridPosition.y +1)/16f) / scaleFactor, outlinePaint);
+            canvas.drawLine(((GridPosition.x - 1) / 16f) * boardSize / scaleFactor, ((GridPosition.y -1)/16f) * boardSize / scaleFactor , boardSize/scaleFactor * (GridPosition.x+1)/16f,
+                    boardSize / scaleFactor * (GridPosition.y -1)/16f, outlinePaint);
+            canvas.drawLine(((GridPosition.x + 1) / 16f) * boardSize / scaleFactor, boardSize / scaleFactor * (GridPosition.y -1)/16f,
+                    boardSize / scaleFactor * (GridPosition.x+1)/16f, boardSize / scaleFactor * (GridPosition.y +1)/16f, outlinePaint);
+            canvas.drawLine(((GridPosition.x - 1) / 16f) * boardSize / scaleFactor, boardSize / scaleFactor * (GridPosition.y + 1)/16f,
+                    boardSize / scaleFactor * (GridPosition.x+1)/16f, boardSize / scaleFactor * (GridPosition.y + 1)/16f, outlinePaint);
+        }
         canvas.restore();
         // Draw the pieces
         int i =0,j =0;
@@ -297,6 +318,7 @@ public class Board {
             Piece checkSelectedPiece = getPiece(checkGridPosition.x, checkGridPosition.y);
             if (checkSelectedPiece != null && checkSelectedPiece.getPlayer() == playerTurn) {
                 selectedPiece = new float[]{ x, y};
+                view.invalidate();
                 return touchResults.FIRSTTAP;
             } else {
                 return touchResults.INVALIDTAP;
