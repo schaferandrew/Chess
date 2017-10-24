@@ -1,5 +1,6 @@
 package edu.msu.blaida.project1;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +12,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,11 +78,19 @@ public class Board {
      */
     private int playerTurn = 1;
 
+
+
+    private TextView playerIndicator;
+
     public Piece[][] getBoard() {
         return board;
     }
     public void setBoard(Piece[][] board) {
         this.board = board;
+    }
+
+    public void setPlayerIndicator(TextView playerIndicator) {
+        this.playerIndicator = playerIndicator;
     }
     /**
      * Save the board to a bundle
@@ -100,6 +111,9 @@ public class Board {
     public Board(Context context) {
         // Create paint for filling the area the board will
         // be solved in.
+
+
+
         fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fillPaint.setColor(0xffcccccc);
 
@@ -147,9 +161,12 @@ public class Board {
         board[7][7] = new Rook(context, 15/16f, 15/16f, 1);
 
     }
-    public void draw(Canvas canvas) {
+
+    public void draw(Canvas canvas, Activity activity) {
+
         int wid = canvas.getWidth();
         int hit = canvas.getHeight();
+
 
         // Determine the minimum of the two dimensions
         int minDim = wid < hit ? wid : hit;
@@ -188,6 +205,12 @@ public class Board {
             }
             i++;
             j=0;
+        }
+
+        if (playerTurn == 1) {
+            playerIndicator.setText("WHITE");
+        } else {
+            playerIndicator.setText("BLACK");
         }
     }
 

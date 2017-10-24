@@ -1,11 +1,15 @@
 package edu.msu.blaida.project1;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 
 /**
@@ -16,10 +20,15 @@ public class ChessView extends View {
      * The actual puzzle
      */
     private Board board;
+    private Activity activity;
 
+    public void setActivity(Activity a) {
+        activity = a;
+    }
     public ChessView(Context context) {
         super(context);
         init(null, 0);
+
     }
 
     public ChessView(Context context, AttributeSet attrs) {
@@ -30,6 +39,7 @@ public class ChessView extends View {
     public ChessView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
+
     }
     /**
      * Save the puzzle to a bundle
@@ -55,8 +65,8 @@ public class ChessView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        board.draw(canvas);
+        board.setPlayerIndicator((TextView)activity.findViewById(R.id.playerIndicator));
+        board.draw(canvas, activity);
     }
 
     @Override

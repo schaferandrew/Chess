@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class ChessActivity extends AppCompatActivity {
 
@@ -22,12 +23,14 @@ public class ChessActivity extends AppCompatActivity {
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_chess);
-
+        ChessView view = (ChessView)this.findViewById(R.id.chessView);
+        view.setActivity(this);
         if(bundle != null) {
             // We have saved state
-            ChessView view = (ChessView)this.findViewById(R.id.chessView);
             view.loadInstanceState(bundle);
+
         }
+
 
     }
     @Override
