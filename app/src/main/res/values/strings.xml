@@ -12,6 +12,8 @@
     <string name="player_one_input">Player 1 (WHITE)</string>
     <string name="player_two_input">Player 2 (BLACK)</string>
     <string name="player_resign">Resign</string>
+    <string name="player_done">Done</string>
+
 
 
 </resources>

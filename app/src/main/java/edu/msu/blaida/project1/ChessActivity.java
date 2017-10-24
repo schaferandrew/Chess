@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class ChessActivity extends AppCompatActivity {
@@ -23,14 +25,22 @@ public class ChessActivity extends AppCompatActivity {
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_chess);
-        ChessView view = (ChessView)this.findViewById(R.id.chessView);
-        view.setActivity(this);
+
+        final ChessView view = (ChessView)this.findViewById(R.id.chessView);
+        final Button resign = (Button) findViewById(R.id.btnResign);
+        final Board board = view.getBoard();
+        board.setPlayerIndicator((TextView) findViewById(R.id.playerIndicator));
+
         if(bundle != null) {
             // We have saved state
             view.loadInstanceState(bundle);
-
         }
 
+        resign.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                board.resign();
+            }
+        });
 
     }
     @Override

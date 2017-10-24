@@ -16,21 +16,18 @@ import org.w3c.dom.Text;
  * Custom view class for our Puzzle.
  */
 public class ChessView extends View {
+
+
     /**
      * The actual puzzle
      */
     private Board board;
-    private Activity activity;
 
-    public void setActivity(Activity a) {
-        activity = a;
-    }
     public ChessView(Context context) {
         super(context);
         init(null, 0);
 
     }
-
     public ChessView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
@@ -58,15 +55,18 @@ public class ChessView extends View {
 
     private void init(AttributeSet attrs, int defStyle) {
         board = new edu.msu.blaida.project1.Board(getContext());
+        board.setView(this);
         setWillNotDraw(false);
     }
-
+    public Board getBoard() {
+        return board;
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        board.setPlayerIndicator((TextView)activity.findViewById(R.id.playerIndicator));
-        board.draw(canvas, activity);
+        board.draw(canvas);
+
     }
 
     @Override
