@@ -37,6 +37,8 @@ public abstract class Piece {
 
     abstract Point[] getTakePath(Point start, Point end);
 
+    public boolean isPromotable() { return false;}
+
     public int getX() {
         return x;
     }

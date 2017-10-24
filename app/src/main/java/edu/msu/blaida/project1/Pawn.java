@@ -24,6 +24,8 @@ public class Pawn extends Piece {
         }
 
     }
+    @Override
+    public boolean isPromotable() { return true;}
 
     @Override
     Point[] getMovePath(Point start, Point end) {

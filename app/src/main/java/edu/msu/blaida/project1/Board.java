@@ -1,7 +1,9 @@
 package edu.msu.blaida.project1;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -79,7 +81,7 @@ public class Board {
     private int playerTurn = 1;
 
 
-
+    private Context context = null;
     private TextView playerIndicator;
 
     public Piece[][] getBoard() {
@@ -112,7 +114,7 @@ public class Board {
         // Create paint for filling the area the board will
         // be solved in.
 
-
+        this.context = context;
 
         fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fillPaint.setColor(0xffcccccc);
@@ -286,6 +288,49 @@ public class Board {
     public Piece getPiece(int x, int y){
         return this.board[y][x];
     }
+    public void getPromotion(final Piece piece, final Point end) {
+
+        final CharSequence pieceType[] = new CharSequence[] {"Queen", "Rook", "Knight", "Bishop"};
+
+        // The puzzle is done
+        // Instantiate a dialog box builder
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(context);
+
+        // Parameterize the builder
+        builder.setTitle("Promotion");
+        builder.setItems(pieceType, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (pieceType[which] == "Queen") {
+                    board[end.y][end.x] = new Queen(context, 7/16f, 15/16f, piece.getPlayer());
+
+                }
+                else if (pieceType[which] == "Rook") {
+                    board[end.y][end.x] = new Rook(context, 7/16f, 15/16f, piece.getPlayer());
+
+                }
+                else if (pieceType[which] == "Knight") {
+                    board[end.y][end.x] = new Knight(context, 7/16f, 15/16f, piece.getPlayer());
+
+                } else {
+                    board[end.y][end.x] = new Bishop(context, 7/16f, 15/16f, piece.getPlayer());
+                }
+            }
+        });
+
+        // Create the dialog box and show it
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+    public void checkPromotion(Piece piece, Point end) {
+        // White
+        if (piece.getPlayer() == 1 && end.y == 0) {
+            getPromotion(piece, end);
+        } else if (piece.getPlayer() == 2 && end.y == 7){
+            getPromotion(piece, end);
+        }
+    }
 
     private boolean movePiece(Piece piece, Point start, Point end){
         Point[] path = piece.getMovePath(start, end);
@@ -296,6 +341,9 @@ public class Board {
             board[start.y][start.x] = null;
             board[end.y][end.x] = piece;
             piece.setFirstMove(false);
+            if (piece.isPromotable()) {
+                checkPromotion(piece, end);
+            }
             return true;
         }
         return false;
@@ -313,6 +361,9 @@ public class Board {
             board[start.y][start.x] = null;
             board[end.y][end.x] = attacker;
             attacker.setFirstMove(false);
+            if (attacker.isPromotable()) {
+                checkPromotion(attacker, end);
+            }
             return true;
         }
         return false;
