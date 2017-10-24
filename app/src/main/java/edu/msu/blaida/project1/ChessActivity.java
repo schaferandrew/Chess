@@ -55,9 +55,7 @@ public class ChessActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_end:
-                intent = new Intent(this, activity_end.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                startEndActivity(((ChessView)this.findViewById(R.id.chessView)).getBoard().getPlayerTurn());
                 return true;
             case R.id.menu_main:
                 intent = new Intent(this, MainActivity.class);
@@ -77,5 +75,12 @@ public class ChessActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void startEndActivity(int winner){
+        Intent intent;
+        intent = new Intent(this, activity_end.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

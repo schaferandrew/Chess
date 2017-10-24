@@ -270,6 +270,14 @@ public class Board {
         return onTouched(relX, relY);
     }
 
+    public int getPlayerTurn() {
+        return playerTurn;
+    }
+
+    public void setPlayerTurn(int playerTurn) {
+        this.playerTurn = playerTurn;
+    }
+
     /**
      * Handle a touch message. This is when we get an initial touch
      * @param x x location for the touch, relative to the puzzle - 0 to 1 over the puzzle
@@ -302,11 +310,20 @@ public class Board {
 
                 } else {
                     playerTurn = 1;
+
                 }
                 //Find check/checkmate status of the player who's turn it now is
                 EndOfTurnKingStatus status = checkKing(playerTurn);
                 if(status == EndOfTurnKingStatus.CHECKMATE || status == EndOfTurnKingStatus.TAKEN){
-                    //!TODO GAME OVER, current player has lost.
+                    //Game over, current player loses.
+                    int opponent;
+                    if(playerTurn == 1){
+                        opponent = 2;
+                    }
+                    else{
+                        opponent = 1;
+                    }
+                    ((ChessActivity)activity).startEndActivity(opponent);
                 }
                 playerStatus[playerTurn-1] = status;
                 selectedPiece = null;
