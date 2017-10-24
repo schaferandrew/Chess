@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -71,12 +72,17 @@ public class ChessView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean success = board.onTouchEvent(this,event);
-        if(success){
+        touchResults result = board.onTouchEvent(this,event);
+        if(result == touchResults.VALIDMOVE){
             invalidate();
             return true;
+        }else if(result == touchResults.INVALIDMOVE){
+            CharSequence text = "Invalid move.";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(getContext(),text,duration);
+            toast.show();
         }
-        invalidate();
         return super.onTouchEvent(event);
     }
 }

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -76,13 +77,18 @@ public class Board {
     private float[] selectedPiece = null;
 
     /**
-     * Turn Counter 0 is white
+     * Turn Counter 1 is white
      */
     private int playerTurn = 1;
 
 
     private Context context = null;
     private TextView playerIndicator;
+
+    /**
+     * 0 is player 1, 1 is player 2
+     */
+    private EndOfTurnKingStatus[] playerStatus = new EndOfTurnKingStatus[2];
 
     public Piece[][] getBoard() {
         return board;
@@ -222,7 +228,7 @@ public class Board {
      * @param event The motion event describing the touch
      * @return true if the touch is handled.
      */
-    public boolean onTouchEvent(View view, MotionEvent event) {
+    public touchResults onTouchEvent(View view, MotionEvent event) {
         //
         // Convert an x,y location to a relative location in the
         // puzzle.
@@ -230,6 +236,7 @@ public class Board {
 
         float relX = (event.getX() - marginX) / boardSize;
         float relY = (event.getY() - marginY) / boardSize;
+
 
         return onTouched(relX, relY);
     }
@@ -240,17 +247,22 @@ public class Board {
      * @param y y location for the touch, relative to the puzzle - 0 to 1 over the puzzle
      * @return true if the touch is handled
      */
-    private boolean onTouched(float x, float y) {
+    private touchResults onTouched(float x, float y) {
 
         // Check each piece to see if it has been hit
         // We do this in reverse order so we find the pieces in front
         if (selectedPiece == null) {
             Point checkGridPosition = toGridPosition(x, y);
+            if(checkGridPosition == null){
+                //Tap outside board
+                return touchResults.INVALIDTAP;
+            }
             Piece checkSelectedPiece = getPiece(checkGridPosition.x, checkGridPosition.y);
             if (checkSelectedPiece != null && checkSelectedPiece.getPlayer() == playerTurn) {
                 selectedPiece = new float[]{ x, y};
+                return touchResults.FIRSTTAP;
             } else {
-                return false;
+                return touchResults.INVALIDTAP;
             }
         } else {
             Point startGridPosition = toGridPosition(selectedPiece[0], selectedPiece[1]);
@@ -258,19 +270,51 @@ public class Board {
             if (executeMove(startGridPosition,endGridPosition)) {
                 if (playerTurn == 1) {
                     playerTurn = 2;
+
                 } else {
                     playerTurn = 1;
                 }
+                //Find check/checkmate status of the player who's turn it now is
+                playerStatus[playerTurn-1] = checkKing(playerTurn);
+                selectedPiece = null;
+                return touchResults.VALIDMOVE;
             }
             selectedPiece = null;
+            return touchResults.INVALIDMOVE;
+
         }
-        return false;
     }
 
     public boolean executeMove(Point start, Point end){
         Piece attacker = getPiece(start.x, start.y);
         Piece defender = getPiece(end.x, end.y);
-        Point[] path;
+        if(playerStatus[playerTurn-1] == EndOfTurnKingStatus.CHECK){
+            //If youre in Check, you have to be moving a king
+            if(!(attacker instanceof King)){
+                CharSequence text = "You are in check, you must move your king!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context,text,duration);
+                toast.show();
+                return false;
+            }
+            int opponent;
+            if(playerTurn == 1){
+                opponent = 2;
+            }else{
+                opponent = 1;
+            }
+            if(someoneCanAttackSpace(end, opponent)){
+                CharSequence text = "That move would put you in checkmate!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context,text,duration);
+                toast.show();
+                //Cant move to a place that will put you in checkmate
+                return false;
+            }
+
+        }
         if(attacker == null){
             return false;
         }
@@ -330,6 +374,7 @@ public class Board {
         } else if (piece.getPlayer() == 2 && end.y == 7){
             getPromotion(piece, end);
         }
+
     }
 
     private boolean movePiece(Piece piece, Point start, Point end){
@@ -347,7 +392,6 @@ public class Board {
             return true;
         }
         return false;
-        //chessView.Invalidate() //Invalidate after moving. Do in touch event.
     }
 
     private boolean takePiece(Piece attacker, Point start, Point end){
@@ -371,33 +415,13 @@ public class Board {
     }
 
 
-    /**
-     * Helper function for takePiece. Does not perform error checking again, so do not call directly.
-     *
-     * @param x X coordinate of the piece to remove
-     * @param y Y coordinate of the piece to remove
-     */
-    private void removePiece(int x, int y){
-        this.board[y][x] = null;
-    }
-
-    /**
-     * Helper function for movePiece. Swaps the null space with the piece.
-     *
-     * @param piece
-     * @param newX
-     * @param newY
-     */
-    private void swapPiece(Piece piece, int newX, int newY){
-        this.board[newX][newY] = piece;
-        removePiece(piece.getX(), piece.getY());
-        piece.setX(newX);
-        piece.setY(newY);
-    }
-
     private Point toGridPosition(float x, float y) {
         int gridX = (int) floor(x * 8);
         int gridY = (int) floor(y * 8);
+
+        if(gridX >= 8 || gridY >=8 || gridX < 0 || gridY < 0){
+            return null;
+        }
 
         return new Point(gridX,gridY);
     }
@@ -441,11 +465,17 @@ public class Board {
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
                 Piece piece = board[j][i];
+
                 if(piece == null)
                     continue;
                 if(piece.getPlayer() == attackingPlayer){
                     Point[] path =piece.getTakePath(new Point(i,j), target);
+                    if(path == null){
+                        continue;
+                    }
+                    path = Arrays.copyOf(path, path.length-1);
                     if(!piecesBlockingPath(path)){
+                        int test=0;
                         return true;
                     }
                 }
