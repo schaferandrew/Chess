@@ -16,7 +16,7 @@
         tools:text="@string/player_one_turn" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/player_done" />

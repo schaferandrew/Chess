@@ -57,7 +57,6 @@ public class ChessView extends View {
     private void init(AttributeSet attrs, int defStyle) {
         board = new edu.msu.blaida.project1.Board(getContext());
         board.setView(this);
-        setWillNotDraw(false);
     }
     public Board getBoard() {
         return board;

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,8 +17,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onStartGame(View view) {
+        EditText pl1Name = (EditText)findViewById(R.id.playerOneInput);
+        EditText p2Name = (EditText)findViewById(R.id.playerTwoInput);
         Intent intent = new Intent(this, ChessActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("p1Name",pl1Name.getText().toString());
+        intent.putExtra("p2Name",p2Name.getText().toString());
         startActivity(intent);
     }
 

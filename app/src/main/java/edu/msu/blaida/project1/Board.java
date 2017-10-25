@@ -46,7 +46,7 @@ public class Board {
      */
     private Paint fillPaint;
 
-    private Piece[][] board = new Piece[8][8];
+    private transient Piece[][] board = new Piece[8][8];
 
     /**
      * Completed puzzle bitmap
@@ -112,6 +112,9 @@ public class Board {
     }
     public void setActivity(Activity activity) {
         this.activity = activity;
+    }
+    public Activity getActivity(){
+        return this.activity;
     }
     public void setView(ChessView view) {
         this.view = view;
@@ -191,15 +194,25 @@ public class Board {
         AlertDialog.Builder builder =
                 new AlertDialog.Builder(context);
 
+        String resigner;
         // Parameterize the builder
+        if(playerTurn == 1){
+            resigner = ((ChessActivity)activity).getName1();
+        }else{
+            resigner = ((ChessActivity)activity).getName2();
+        }
         builder.setTitle("Resign");
-        builder.setMessage("Player " + playerTurn + " has Resigned")
+        builder.setMessage(resigner+ " has Resigned")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(activity, activity_end.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        activity.startActivity(intent);
+                        int opponent;
+                        if(playerTurn == 1){
+                            opponent = 2;
+                        }else{
+                            opponent = 1;
+                        }
+                        ((ChessActivity)getActivity()).startEndActivity(opponent);
                     }
                 });
         builder.show();
@@ -268,9 +281,9 @@ public class Board {
         }
 
         if (playerTurn == 1) {
-            playerIndicator.setText(context.getResources().getString(R.string.player_one_turn));
+            playerIndicator.setText(((ChessActivity)activity).getName1() + ", it is your turn!");
         } else {
-            playerIndicator.setText(context.getResources().getString(R.string.player_two_turn));
+            playerIndicator.setText(((ChessActivity)activity).getName2() + ", it is your turn!");
         }
     }
 
@@ -301,6 +314,20 @@ public class Board {
         this.playerTurn = playerTurn;
     }
 
+    public void swapTurns(){
+        if(this.playerTurn == 1){
+            this.playerTurn = 2;
+        }else{
+            this.playerTurn = 1;
+        }
+
+        if (playerTurn == 1) {
+            playerIndicator.setText(((ChessActivity)activity).getName1() + ", it is your turn!");
+        } else {
+            playerIndicator.setText(((ChessActivity)activity).getName2() + ", it is your turn!");
+        }
+    }
+
     /**
      * Handle a touch message. This is when we get an initial touch
      * @param x x location for the touch, relative to the puzzle - 0 to 1 over the puzzle
@@ -329,13 +356,7 @@ public class Board {
             Point startGridPosition = toGridPosition(selectedPiece[0], selectedPiece[1]);
             Point endGridPosition = toGridPosition(x,y);
             if (executeMove(startGridPosition,endGridPosition)) {
-                if (playerTurn == 1) {
-                    playerTurn = 2;
-
-                } else {
-                    playerTurn = 1;
-
-                }
+                swapTurns();
                 //Find check/checkmate status of the player who's turn it now is
                 EndOfTurnKingStatus status = checkKing(playerTurn);
                 if(status == EndOfTurnKingStatus.CHECKMATE || status == EndOfTurnKingStatus.TAKEN){
@@ -358,6 +379,7 @@ public class Board {
 
         }
     }
+
 
     public boolean executeMove(Point start, Point end){
         Piece attacker = getPiece(start.x, start.y);
@@ -459,8 +481,28 @@ public class Board {
             return false;
         }
         if(!piecesBlockingPath(path)){
+
             board[start.y][start.x] = null;
             board[end.y][end.x] = piece;
+            Point KingSpace = findKing(playerTurn);
+            int opponent;
+            if(playerTurn == 1){
+                opponent = 2;
+            }else{
+                opponent = 1;
+            }
+            if(someoneCanAttackSpace(KingSpace, opponent)){
+                CharSequence text = "That move would put you in checkmate!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context,text,duration);
+                toast.show();
+                //Cant move to a place that will put you in checkmate
+                board[start.y][start.x] = piece;
+                board[end.y][end.x] = null;
+                return false;
+            }
+
             piece.setFirstMove(false);
             if (piece.isPromotable()) {
                 checkPromotion(piece, end);
@@ -478,8 +520,28 @@ public class Board {
         path = Arrays.copyOf(path, path.length-1);
 
         if(!piecesBlockingPath(path)){
+
+            Piece temp = board[end.y][end.x];
             board[start.y][start.x] = null;
             board[end.y][end.x] = attacker;
+            Point KingSpace = findKing(playerTurn);
+            int opponent;
+            if(playerTurn == 1){
+                opponent = 2;
+            }else{
+                opponent = 1;
+            }
+            if(someoneCanAttackSpace(KingSpace, opponent)){
+                CharSequence text = "That move would put you in checkmate!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context,text,duration);
+                toast.show();
+                //Cant move to a place that will put you in checkmate
+                board[start.y][start.x] = attacker;
+                board[end.y][end.x] = temp;
+                return false;
+            }
             attacker.setFirstMove(false);
             if (attacker.isPromotable()) {
                 checkPromotion(attacker, end);
