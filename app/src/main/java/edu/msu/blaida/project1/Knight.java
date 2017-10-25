@@ -12,9 +12,9 @@ public class Knight extends Piece {
     public Knight(Context context, float x, float y, int player) {
         super(context, x, y, player);
         if(player == 1){
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_nlt45));
+            this.setBitmap(R.drawable.chess_nlt45);
         }else{
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_ndt45));
+            this.setBitmap(R.drawable.chess_ndt45);
         }
     }
 

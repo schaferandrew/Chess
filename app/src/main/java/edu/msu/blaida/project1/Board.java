@@ -259,7 +259,7 @@ public class Board {
         for(Piece[] pieceRow : board) {
             for(Piece piece : pieceRow) {
                 if (piece != null) {
-                    piece.draw(canvas, marginX, marginY, boardSize, scaleFactor, j, i);
+                    piece.draw(context,canvas, marginX, marginY, boardSize, scaleFactor, j, i);
                 }
                 j++;
             }

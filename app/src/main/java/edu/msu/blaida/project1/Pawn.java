@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
 
@@ -18,11 +19,10 @@ public class Pawn extends Piece {
     public Pawn(Context context, float x, float y, int player){
         super(context, x, y, player);
         if(player == 1){
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_plt45));
+            this.setBitmap(R.drawable.chess_plt45);
         }else{
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_pdt45));
+            this.setBitmap(R.drawable.chess_pdt45);
         }
-
     }
     @Override
     public boolean isPromotable() { return true;}

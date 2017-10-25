@@ -14,9 +14,9 @@ public class Queen extends Piece {
     public Queen(Context context, float x, float y, int player) {
         super(context, x, y, player);
         if(player == 1){
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_qlt45));
+            this.setBitmap(R.drawable.chess_qlt45);
         }else{
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_qdt45));
+            this.setBitmap(R.drawable.chess_qdt45);
         }
     }
 

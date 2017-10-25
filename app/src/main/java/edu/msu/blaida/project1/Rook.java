@@ -4,19 +4,20 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by power on 10/9/2017.
  */
 
-public class Rook extends Piece {
+public class Rook extends Piece  {
     public Rook(Context context, float x, float y, int player) {
         super(context, x, y, player);
         if(player == 1){
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_rlt45));
+            this.setBitmap(R.drawable.chess_rlt45);
         }else{
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_rdt45));
+            this.setBitmap(R.drawable.chess_rdt45);
         }
     }
 

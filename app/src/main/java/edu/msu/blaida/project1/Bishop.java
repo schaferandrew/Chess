@@ -17,9 +17,9 @@ public class Bishop extends Piece {
     public Bishop(Context context, float x, float y, int player) {
         super(context, x, y, player);
         if(player == 1){
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_blt45));
+            this.setBitmap(R.drawable.chess_blt45);
         }else{
-            this.setBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.chess_bdt45));
+            this.setBitmap(R.drawable.chess_bdt45);
         }
 
     }

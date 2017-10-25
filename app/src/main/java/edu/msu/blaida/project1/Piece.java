@@ -3,14 +3,17 @@ package edu.msu.blaida.project1;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 
+import java.io.Serializable;
+
 /**
  * Abstract class describing a piece
  */
-public abstract class Piece {
+public abstract class Piece implements Serializable {
 
     // Adam, delete these are from your old system, delete if not used
     private int x;
@@ -22,7 +25,7 @@ public abstract class Piece {
 
     private int player;
 
-    private Bitmap bitmap;
+    private int bitmap;
 
     private boolean firstMove = true;
 
@@ -71,11 +74,11 @@ public abstract class Piece {
         this.player = player;
     }
 
-    public Bitmap getBitmap() {
+    public int getBitmap() {
         return bitmap;
     }
 
-    public void setBitmap(Bitmap bitmap) {
+    public void setBitmap(int bitmap) {
         this.bitmap = bitmap;
     }
 
@@ -87,10 +90,11 @@ public abstract class Piece {
      * @param boardSize Size we draw the puzzle in pixels
      * @param scaleFactor Amount we scale the puzzle pieces when we draw them
      */
-    public void draw(Canvas canvas, int marginX, int marginY,
+    public void draw(Context context, Canvas canvas, int marginX, int marginY,
                      int boardSize, float scaleFactor,
                      float posX, float posY) {
         canvas.save();
+        Bitmap b = BitmapFactory.decodeResource(context.getResources(), getBitmap());
 
         // Convert x,y to pixels and add the margin, then draw
         canvas.translate(marginX + ((posX*2+1)/16) * boardSize, marginY + ((posY*2+1)/16) * boardSize);
@@ -99,10 +103,10 @@ public abstract class Piece {
         canvas.scale(scaleFactor/5, scaleFactor/5);
 
         // This magic code makes the center of the piece at 0, 0
-        canvas.translate(-getBitmap().getWidth() / 2, -getBitmap().getHeight() / 2);
+        canvas.translate(-b.getWidth() / 2, -b.getHeight() / 2);
 
         // Draw the bitmap
-        canvas.drawBitmap(getBitmap(), 0, 0, null);
+        canvas.drawBitmap(b, 0, 0, null);
         canvas.restore();
     }
 
