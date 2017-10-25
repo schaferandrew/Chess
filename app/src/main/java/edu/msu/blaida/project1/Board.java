@@ -122,7 +122,9 @@ public class Board {
      * @param bundle The bundle we save to
      */
     public void saveInstanceState(Bundle bundle) {
+
         bundle.putSerializable("BOARD", board);
+        bundle.putInt("Turn", playerTurn);
     }
     /**
      * Read the puzzle from a bundle
@@ -130,7 +132,7 @@ public class Board {
      */
     public void loadInstanceState(Bundle bundle) {
         board = (Piece[][]) bundle.getSerializable("BOARD");
-
+        playerTurn = bundle.getInt("Turn");
     }
 
     public Board(Context context) {
